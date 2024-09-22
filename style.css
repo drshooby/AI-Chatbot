@@ -1,0 +1,69 @@
+body {
+    font-family: "Roboto", system-ui;
+    font-weight: 400;
+    font-style: normal;
+    margin: 1.5em;
+}
+
+#head-text {
+    display: flex;
+    justify-content: flex-start;
+}
+
+#chat-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    border: 1px solid black;
+    width: 100%;
+    min-height: 20vh;
+    box-sizing: border-box;
+}
+
+#messages {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    flex-grow: 1;
+    margin: 0.5em;
+    word-wrap: break-word;
+    white-space: normal;
+    font-size: 15px;
+}
+
+@media (max-width: 768px) {
+    #chat-container {
+        min-height: 30vh;
+    }
+}
+
+#user-input-container {
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 1em;
+}
+
+#user-input {
+    width: 90%;
+    height: 3vh;
+    border: 1px solid black;
+    padding-left: 1em;
+    font-size: 15px;
+}
+
+#send-btn-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    margin-top: 1em;
+}
+
+#send-btn {
+    width: 65px;
+    height: 40px;
+    color: white;
+    background-color: rgb(55, 129, 226);
+    border: none;
+    padding: 0.5em;
+    box-sizing: border-box;
+}
