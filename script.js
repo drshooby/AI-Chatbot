@@ -21,7 +21,7 @@ sendBtn.addEventListener('click', sendMessage);
 function sendMessage() {
     inputText = inputText.trim()
     if (inputText) {
-        messagesContainer..insertAdjacentHTML('beforeend', `<p class="message">${inputText}</p>`);
+        messagesContainer.insertAdjacentHTML('beforeend', `<p class="message">${inputText}</p>`);
     } else {
         alert("Empty message body");
     }
