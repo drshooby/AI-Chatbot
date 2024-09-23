@@ -1,29 +1,29 @@
-console.log("script connected")
+console.log("script connected");
 
-const inputField = document.getElementById('user-input')
-const sendBtn =  document.getElementById('send-btn')
-const messagesContainer = document.getElementById('messages')
+const inputField = document.getElementById('user-input');
+const sendBtn =  document.getElementById('send-btn');
+const messagesContainer = document.getElementById('messages');
 
-let inputText = ""
+let inputText = "";
 
 inputField.addEventListener('input', () => {
-    inputText = inputField.value
-})
+    inputText = inputField.value;
+});
 
 inputField.addEventListener('keydown', (keyEvent) => {
     if (keyEvent.key == 'Enter') {
-        sendMessage()
+        sendMessage();
     }
-})
+});
 
-sendBtn.addEventListener('click', sendMessage)
+sendBtn.addEventListener('click', sendMessage);
 
 function sendMessage() {
     inputText = inputText.trim()
     if (inputText) {
-        messagesContainer.innerText = inputText
+        messagesContainer..insertAdjacentHTML('beforeend', `<p class="message">${inputText}</p>`);
     } else {
-        alert("Empty message body")
+        alert("Empty message body");
     }
-    inputField.value = ''
+    inputField.value = '';
 }
