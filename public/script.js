@@ -29,6 +29,8 @@ async function sendMessage() {
 
         const target = '/chat'
 
+        console.log(JSON.stringify(inputData))
+
         const response = await fetch(target, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -37,14 +39,12 @@ async function sendMessage() {
 
         const data = await response.json();
 
-        messagesContainer.insertAdjacentHTML('beforeend', `<p class="message">Bot: ${data.confirmation}</p>`);
+        messagesContainer.insertAdjacentHTML('beforeend', `<p class="message">Bot: ${data.botResponse}</p>`);
         
         const newestMessage = messagesContainer.lastElementChild
         if (newestMessage) {
             newestMessage.scrollIntoView({behavior: 'smooth'})
         }
-
-
     } else {
         alert("Empty message body");
     }
