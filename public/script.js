@@ -51,4 +51,24 @@ async function sendMessage() {
     inputField.value = '';
 }
 
-
+function logEvent(type, element) {
+    fetch('/log-event', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ eventType: type, elementName: element, timestamp: new Date() })
+    });
+  }
+  
+  // Log click events on the "Submit" button
+sendBtn.addEventListener('click', () => {
+    logEvent('click', 'Send Button');
+});
+  
+  // Log hover and focus events on the input field
+inputField.addEventListener('mouseover', () => {
+    logEvent('hover', 'User Input');
+});
+  
+inputField.addEventListener('focus', () => {
+    logEvent('focus', 'User Input');
+});
