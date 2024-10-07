@@ -25,6 +25,10 @@ mongoose.connect(process.env.MONGO_URI)
 const Interaction = require('./models/Interaction');  // Import Interaction model
 
 app.get('/', (req, rsp) => {
+    rsp.sendFile(path.join(__dirname, 'public', 'index.html'))
+})
+
+app.get('/chat', (req, rsp) => {
     rsp.sendFile(path.join(__dirname, 'public', 'chat.html'))
 })
 

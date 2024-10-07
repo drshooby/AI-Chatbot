@@ -1,0 +1,30 @@
+body {
+    font-family: "Roboto", system-ui;
+    font-weight: 400;
+    font-style: normal;
+    margin: 1.5em;
+}
+
+h1 {
+    display: flex;
+    justify-content: center;
+}
+
+p {
+    display: flex;
+    justify-content: center;
+}
+
+a {
+    display: flex;
+    justify-content: center;
+    text-decoration: none;
+    color: rgb(55, 129, 226);
+}
+
+#main {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+}
