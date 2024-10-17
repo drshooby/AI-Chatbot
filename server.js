@@ -33,15 +33,21 @@ app.get('/chat', (req, rsp) => {
 })
 
 app.post('/chat', async (req, res) => {
-  const message = req.body
-  if (!message) {
-    return res.status(400).send('Invalid input');
-  }
+//   const message = req.body
+//   if (!message) {
+//     return res.status(400).send('Invalid input');
+//   }
+
+  const { history = [], input: userInput } = req.body
+
+  const messages = history.length === 0
+    ? [{ role: 'system', content: 'You are a helpful assistant.' }, {role: 'user', content: userInput }]
+    : [{ role: 'system', content: 'You are a helpful assistant.' }, ...history, { role: 'user', content: userInput }]
 
   try {
     const response = await openai.chat.completions.create({
       model: "gpt-4o-mini",
-      messages: [{ role: 'user', content: message.chat }],
+      messages: messages,
       max_tokens: 100,
     });
 
@@ -49,7 +55,7 @@ app.post('/chat', async (req, res) => {
 
     // Log the interaction to MongoDB
     const interaction = new Interaction({
-      userInput: message.chat,
+      userInput: userInput,
       botResponse: botResponse,
     });
     await interaction.save();  // Save the interaction to MongoDB
