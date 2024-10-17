@@ -43,6 +43,10 @@ async function sendMessage() {
         conversationHistory.push({ role: 'assistant', content: data.botResponse})
 
         messagesContainer.insertAdjacentHTML('beforeend', `<p class="message">Bot: ${data.botResponse}</p>`);
+        messagesContainer.insertAdjacentHTML('beforeend', `<p class="message">Relevant Links:</p>`);
+        data.searchResults.forEach(result => {
+            messagesContainer.insertAdjacentHTML('beforeend', `<a href="${result.url}"target="_blank">${result.title}</a><p>${result.snippet}</p>`)}
+        );
         
         const newestMessage = messagesContainer.lastElementChild
         if (newestMessage) {

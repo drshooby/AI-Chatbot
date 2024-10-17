@@ -16,8 +16,8 @@ body {
     justify-content: flex-start;
     border: 1px solid black;
     width: 100%;
-    min-height: 15vh;
-    max-height: 20vw;
+    min-height: 20vh;
+    max-height: 30vw;
     box-sizing: border-box;
     overflow-y: auto;
 }

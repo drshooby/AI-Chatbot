@@ -4,6 +4,7 @@ const { OpenAI } = require('openai')
 require('dotenv').config()
 
 const path = require('path')
+const axios = require('axios')
 
 const app = express()
 
@@ -45,6 +46,18 @@ app.post('/chat', async (req, res) => {
     : [{ role: 'system', content: 'You are a helpful assistant.' }, ...history, { role: 'user', content: userInput }]
 
   try {
+
+    const bingResponse = await axios.get('https://api.bing.microsoft.com/v7.0/search', {
+        params: { q: userInput }, // Use the user's input as the search query
+        headers: { 'Ocp-Apim-Subscription-Key': process.env.BING_API_KEY }
+    });
+
+    const searchResults = bingResponse.data.webPages.value.slice(0, 3).map(result => ({
+        title: result.name,
+        url: result.url,
+        snippet: result.snippet
+    }));
+
     const response = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: messages,
@@ -61,7 +74,7 @@ app.post('/chat', async (req, res) => {
     await interaction.save();  // Save the interaction to MongoDB
     
     // send bot response back to client
-    res.json({ botResponse });
+    res.json({ searchResults, botResponse });
   } catch (error) {
     console.error('Error interacting with OpenAI API:', error.message);
     res.status(500).send('Server Error');
