@@ -15,16 +15,35 @@ p {
     justify-content: center;
 }
 
-a {
-    display: flex;
-    justify-content: center;
-    text-decoration: none;
-    color: rgb(55, 129, 226);
-}
-
 #main {
     display: flex;
     justify-content: center;
     flex-direction: column;
     gap: 20px;
+}
+
+#form-container {
+    margin-top: 50px;
+    display: flex;
+    justify-content: center;
+}
+
+#participant-form {
+    gap: 10px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+button {
+    border-radius: 5px;
+    border-color: rgb(55, 129, 226);
+    height: 30px;
+    transition: 150ms ease-in-out;
+}
+
+button:hover {
+    background-color: rgb(55, 129, 226);;
+    color: white;
+    border: 0;
 }

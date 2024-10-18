@@ -14,7 +14,20 @@
     <div id="main">
         <h1>What is the Chatbot?</h1>
         <p>Type your message in the input box and submit. The chat box will display messages between you and the bot.</p>
-        <a href="chat.html">Click here to try it out!</a>
     </div>
+    <div id="form-container">
+        <form id="participant-form" action="/chat">
+            <label for="participantID">Enter your participant ID:</label>
+            <input type="text" id="participantID" name="participantID" required>
+            <button type="submit">Start Chat</button>
+        </form>
+    </div>
+    <script>
+        document.getElementById('participant-form').addEventListener('submit', (event) => {
+            const participantID = document.getElementById('participantID').value
+            localStorage.setItem('participantID', participantID)
+            document.location.href = "/chat.html"
+        })
+    </script>
 </body>
 </html>
