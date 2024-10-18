@@ -33,13 +33,32 @@ app.get('/chat', (req, rsp) => {
     rsp.sendFile(path.join(__dirname, 'public', 'chat.html'))
 })
 
-app.post('/chat', async (req, res) => {
-//   const message = req.body
-//   if (!message) {
-//     return res.status(400).send('Invalid input');
-//   }
+app.post('/history', async (req, res) => {
+    const { participantID } = req.body; // Get participant ID
 
-  const { history = [], input: userInput } = req.body
+    if (!participantID) {
+        return res.status(400).send('Participant ID is required');
+    }
+    
+    try {
+        // Fetch all interactions from the database for the given participantID
+        const interactions = await Interaction.find({ participantID }).sort( { timestamp: 1 });
+        // Send the conversation history back to the client
+        res.json({ interactions });
+    } catch (error) {
+        console.error('Error fetching conversation history:', error.message);
+        res.status(500).send('Server Error');
+    }
+});
+    
+
+app.post('/chat', async (req, res) => {
+
+  const { history = [], input: userInput, participantID } = req.body
+
+  if (!participantID) {
+    return res.status(400).send('Participant ID is required')
+  }
 
   const messages = history.length === 0
     ? [{ role: 'system', content: 'You are a helpful assistant.' }, {role: 'user', content: userInput }]
@@ -70,6 +89,7 @@ app.post('/chat', async (req, res) => {
     const interaction = new Interaction({
       userInput: userInput,
       botResponse: botResponse,
+      participantID: participantID
     });
     await interaction.save();  // Save the interaction to MongoDB
     
@@ -84,11 +104,16 @@ app.post('/chat', async (req, res) => {
 const EventLog = require('./models/EventLog');  // Import EventLog model
 
 app.post('/log-event', async (req, res) => {
-  const { eventType, elementName, timestamp } = req.body;
+
+  const { eventType, elementName, timestamp, participantID } = req.body;
+
+  if (!participantID) {
+    return res.status(400).send('Participant ID is required')
+  }
 
   try {
     // Log the event to MongoDB
-    const event = new EventLog({ eventType, elementName, timestamp });
+    const event = new EventLog({ eventType, elementName, timestamp, participantID });
     await event.save();
 
     res.status(200).send('Event logged successfully');

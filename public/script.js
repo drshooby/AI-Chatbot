@@ -1,10 +1,41 @@
 console.log("script connected");
 
+const participantID = localStorage.getItem('participantID');
+if (!participantID) {
+    alert('Please enter a participant ID.')
+    window.location.href = '/';
+}
+
+let conversationHistory = []
+
+async function loadConversationHistory() {
+
+    const target = '/history'
+
+    const response = await fetch(target, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ participantID }) // Send participantID to the server
+    });
+
+    const data = await response.json();
+    if (data.interactions && data.interactions.length > 0) {
+        data.interactions.forEach(interaction => {
+            messagesContainer.insertAdjacentHTML('beforeend', `<p class="message">You: ${interaction.userInput}</p>`);
+            messagesContainer.insertAdjacentHTML('beforeend', `<p class="message">Bot: ${interaction.botResponse}</p>`);
+            // Add to conversation history
+            conversationHistory.push({ role: 'user', content: interaction.userInput });
+            conversationHistory.push({ role: 'assistant', content: interaction.botResponse });
+        });
+    }
+}
+
+// Load history when agent loads
+window.onload = loadConversationHistory;
+
 const inputField = document.getElementById('user-input');
 const sendBtn =  document.getElementById('send-btn');
 const messagesContainer = document.getElementById('messages');
-
-let conversationHistory = []
 
 let inputText = "";
 
@@ -26,8 +57,8 @@ async function sendMessage() {
         messagesContainer.insertAdjacentHTML('beforeend', `<p class="message">You: ${inputText}</p>`);
 
         const payload = conversationHistory.length === 0
-            ? { input: inputText } // First submission, send only input
-            : { history: conversationHistory, input: inputText }
+            ? { input: inputText, participantID } // First submission, send only input
+            : { history: conversationHistory, input: inputText, participantID }
 
         const target = '/chat'
 
@@ -62,7 +93,7 @@ function logEvent(type, element) {
     fetch('/log-event', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ eventType: type, elementName: element, timestamp: new Date() })
+      body: JSON.stringify({ eventType: type, elementName: element, timestamp: new Date(), participantID })
     });
   }
   
