@@ -113,3 +113,15 @@ inputField.addEventListener('mouseover', () => {
 inputField.addEventListener('focus', () => {
     logEvent('focus', 'User Input');
 });
+
+const quill = new Quill('#editor', {
+    modules: {
+        toolbar: [
+          [{ header: [1, 2, false] }],
+          ['bold', 'italic', 'underline', 'strike'],
+          ['image', 'link', 'code-block'],
+        ],
+      },
+      placeholder: 'Your notes...',
+      theme: 'snow', // or 'bubble'
+});
