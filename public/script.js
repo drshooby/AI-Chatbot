@@ -21,8 +21,9 @@ async function loadConversationHistory() {
     const data = await response.json();
     if (data.interactions && data.interactions.length > 0) {
         data.interactions.forEach(interaction => {
+	    let formatResponse = marked.parse(interaction.botResponse);
             messagesContainer.insertAdjacentHTML('beforeend', `<p class="message">You: ${interaction.userInput}</p>`);
-            messagesContainer.insertAdjacentHTML('beforeend', `<p class="message">Bot: ${interaction.botResponse}</p>`);
+            messagesContainer.insertAdjacentHTML('beforeend', `<p class="message">Bot: ${formatResponse}</p>`);
             // Add to conversation history
             conversationHistory.push({ role: 'user', content: interaction.userInput });
             conversationHistory.push({ role: 'assistant', content: interaction.botResponse });
@@ -70,10 +71,12 @@ async function sendMessage() {
 
         const data = await response.json();
 
+	let formatResponse = marked.parse(data.botResponse);
+
         conversationHistory.push({ role: 'user', content: inputText })
         conversationHistory.push({ role: 'assistant', content: data.botResponse})
 
-        messagesContainer.insertAdjacentHTML('beforeend', `<p class="message">Bot: ${data.botResponse}</p>`);
+        messagesContainer.insertAdjacentHTML('beforeend', `<p class="message">Bot: ${formatResponse}</p>`);
         messagesContainer.insertAdjacentHTML('beforeend', `<p class="message">Relevant Links:</p>`);
         data.searchResults.forEach(result => {
             messagesContainer.insertAdjacentHTML('beforeend', `<a href="${result.url}"target="_blank">${result.title}</a><p>${result.snippet}</p>`)}
