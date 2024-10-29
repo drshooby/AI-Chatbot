@@ -125,3 +125,19 @@ const quill = new Quill('#editor', {
       placeholder: 'Your notes...',
       theme: 'snow', // or 'bubble'
 });
+
+const downloadBtn = document.getElementById('download-btn')
+downloadBtn.addEventListener('click', () => {
+    console.log('downloading')
+    const content = quill.root.innerHTML
+
+    const opt = {
+        margin: 1,
+        filename: 'my-notes.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 1 },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    }
+
+    html2pdf().set(opt).from(content).save()
+})
