@@ -22,7 +22,7 @@ body {
     border: 1px solid black;
     width: 60%;
     min-height: 20vh;
-    max-height: 50vh;
+    max-height: 70vh;
     box-sizing: border-box;
     overflow-y: auto;
 }
@@ -46,6 +46,7 @@ body {
 #editor-container {
     width: 40%;
     padding-left: 10px;
+    max-height: 70vh;
 }
 
 #editor {
