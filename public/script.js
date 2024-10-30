@@ -31,9 +31,6 @@ async function loadConversationHistory() {
     }
 }
 
-// Load history when agent loads
-window.onload = loadConversationHistory;
-
 const inputField = document.getElementById('user-input');
 const sendBtn =  document.getElementById('send-btn');
 const messagesContainer = document.getElementById('messages');
@@ -98,7 +95,7 @@ function logEvent(type, element) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ eventType: type, elementName: element, timestamp: new Date(), participantID })
     });
-  }
+}
   
   // Log click events on the "Submit" button
 sendBtn.addEventListener('click', () => {
@@ -141,3 +138,58 @@ downloadBtn.addEventListener('click', () => {
 
     html2pdf().set(opt).from(content).save()
 })
+
+// Saving deltas for the notes
+var Delta = Quill.import('delta');
+var change = new Delta();
+quill.on('text-change', (delta) => {
+  change = change.compose(delta);
+});
+
+// save every 5 seconds
+setInterval(() => {
+  if (change.length() > 0) {
+    console.log('Saving changes', change);
+
+    fetch('/notes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+	participantID,
+        doc: quill.getContents().ops,
+        timestamp: new Date()
+      })
+    });
+
+    change = new Delta();
+  }
+}, 3000);
+
+async function fetchNotes() {
+    const response = await fetch('/getnotes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+	participantID
+      })
+    });
+
+    const data = await response.json();
+
+    //console.log(data.doc);
+    quill.setContents(data.doc);
+} 
+
+// Check for unsaved data
+window.onbeforeunload = () => {
+  if (change.length() > 0) {
+    return 'Notes have unsaved changes. Are you sure you want to leave?';
+  }
+}
+
+// Load history when agent loads
+window.onload = () => {
+  loadConversationHistory();
+  fetchNotes();
+}
+
