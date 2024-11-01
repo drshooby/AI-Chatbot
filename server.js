@@ -24,6 +24,7 @@ mongoose.connect(process.env.MONGO_URI)
   .catch(err => console.error('MongoDB connection error:', err));
 
 const Interaction = require('./models/Interaction');  // Import Interaction model
+const Notes = require('./models/Notes');  // Import Notes model
 
 app.get('/', (req, rsp) => {
     rsp.sendFile(path.join(__dirname, 'public', 'index.html'))
@@ -51,6 +52,45 @@ app.post('/history', async (req, res) => {
     }
 });
     
+app.post('/getnotes', async (req, res) => {
+    const { participantID } = req.body; // Get participant ID
+
+    if (!participantID) {
+        return res.status(400).send('Participant ID is required');
+    }
+
+    try {
+        let doc = await Notes.findOne({participantID: participantID}).exec();
+
+	//make a fake doc if it doen't exist
+	if (!doc) {
+	  doc = new Notes({
+	    participantID: participantID,
+	    doc: []
+	  });
+	  await doc.save()
+	}
+	res.send(doc);
+
+    } catch (error) {
+        console.error('Error fetching notes:', error.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+app.post('/notes', async (req, res) => {
+  const { participantID, doc } = req.body;
+    
+  if (!participantID) {
+    return res.status(400).send('Participant ID is required')
+  }
+
+  const filter = { participantID: participantID };
+  const update = { doc: doc };
+
+  await Notes.findOneAndUpdate(filter, update);  // Save the interaction to MongoDB
+  res.send("Notes saved");
+});
 
 app.post('/chat', async (req, res) => {
 
