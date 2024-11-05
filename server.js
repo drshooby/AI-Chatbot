@@ -100,9 +100,11 @@ app.post('/chat', async (req, res) => {
     return res.status(400).send('Participant ID is required')
   }
 
+  const initPrompt = 'You are a helpful assistant assisting in procedural knowledge understanding. For each step of the process, include a header, and create an organized response for the user.'
+
   const messages = history.length === 0
-    ? [{ role: 'system', content: 'You are a helpful assistant.' }, {role: 'user', content: userInput }]
-    : [{ role: 'system', content: 'You are a helpful assistant.' }, ...history, { role: 'user', content: userInput }]
+    ? [{ role: 'system', content: initPrompt }, {role: 'user', content: userInput }]
+    : [{ role: 'system', content: initPrompt }, ...history, { role: 'user', content: userInput }]
 
   try {
 
