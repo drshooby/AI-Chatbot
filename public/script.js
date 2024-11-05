@@ -31,6 +31,9 @@ async function loadConversationHistory() {
     }
 }
 
+// Load history when agent loads
+window.onload = loadConversationHistory;
+
 const inputField = document.getElementById('user-input');
 const sendBtn =  document.getElementById('send-btn');
 const messagesContainer = document.getElementById('messages');
@@ -68,17 +71,24 @@ async function sendMessage() {
 
         const data = await response.json();
 
-	let formatResponse = marked.parse(data.botResponse);
+	    let formatResponse = marked.parse(data.botResponse);
 
         conversationHistory.push({ role: 'user', content: inputText })
         conversationHistory.push({ role: 'assistant', content: data.botResponse})
 
-        messagesContainer.insertAdjacentHTML('beforeend', `<p class="message">Bot: ${formatResponse}</p>`);
-        messagesContainer.insertAdjacentHTML('beforeend', `<p class="message">Relevant Links:</p>`);
-        data.searchResults.forEach(result => {
-            messagesContainer.insertAdjacentHTML('beforeend', `<a href="${result.url}"target="_blank">${result.title}</a><p>${result.snippet}</p>`)}
-        );
-        
+        botElement = `<p class="message">Bot: ${formatResponse}</p>`
+        linkElement = `<p class="message">Relevant Links:</p>`
+
+        data.searchResults.forEach(result => {(
+            linkElement += `<a href="${result.url}"target="_blank">${result.title}</a><p>${result.snippet}</p>`
+        )});
+
+        newDiv = `<div class="messageDiv">${botElement}</div>` + linkElement
+
+        messagesContainer.insertAdjacentHTML('beforeend', newDiv)
+
+        const divs = document.querySelectorAll('.messageDiv'); // TODO!
+
         const newestMessage = messagesContainer.lastElementChild
         if (newestMessage) {
             newestMessage.scrollIntoView({behavior: 'smooth'})
@@ -95,7 +105,7 @@ function logEvent(type, element) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ eventType: type, elementName: element, timestamp: new Date(), participantID })
     });
-}
+  }
   
   // Log click events on the "Submit" button
 sendBtn.addEventListener('click', () => {
@@ -138,58 +148,3 @@ downloadBtn.addEventListener('click', () => {
 
     html2pdf().set(opt).from(content).save()
 })
-
-// Saving deltas for the notes
-var Delta = Quill.import('delta');
-var change = new Delta();
-quill.on('text-change', (delta) => {
-  change = change.compose(delta);
-});
-
-// save every 5 seconds
-setInterval(() => {
-  if (change.length() > 0) {
-    console.log('Saving changes', change);
-
-    fetch('/notes', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-	participantID,
-        doc: quill.getContents().ops,
-        timestamp: new Date()
-      })
-    });
-
-    change = new Delta();
-  }
-}, 3000);
-
-async function fetchNotes() {
-    const response = await fetch('/getnotes', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-	participantID
-      })
-    });
-
-    const data = await response.json();
-
-    //console.log(data.doc);
-    quill.setContents(data.doc);
-} 
-
-// Check for unsaved data
-window.onbeforeunload = () => {
-  if (change.length() > 0) {
-    return 'Notes have unsaved changes. Are you sure you want to leave?';
-  }
-}
-
-// Load history when agent loads
-window.onload = () => {
-  loadConversationHistory();
-  fetchNotes();
-}
-
