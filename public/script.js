@@ -22,17 +22,14 @@ async function loadConversationHistory() {
     if (data.interactions && data.interactions.length > 0) {
         data.interactions.forEach(interaction => {
 	    let formatResponse = marked.parse(interaction.botResponse);
-            messagesContainer.insertAdjacentHTML('beforeend', `<p class="message">You: ${interaction.userInput}</p>`);
-            messagesContainer.insertAdjacentHTML('beforeend', `<p class="message">Bot: ${formatResponse}</p>`);
+            messagesContainer.insertAdjacentHTML('beforeend', `<div class="message"><strong class="name">You</strong>: ${interaction.userInput}</div>`);
+            messagesContainer.insertAdjacentHTML('beforeend', `<div class="response"><strong class="name">Bot</strong>: ${formatResponse}</div>`);
             // Add to conversation history
             conversationHistory.push({ role: 'user', content: interaction.userInput });
             conversationHistory.push({ role: 'assistant', content: interaction.botResponse });
         });
     }
 }
-
-// Load history when agent loads
-window.onload = loadConversationHistory;
 
 const inputField = document.getElementById('user-input');
 const sendBtn =  document.getElementById('send-btn');
@@ -55,7 +52,7 @@ sendBtn.addEventListener('click', sendMessage);
 async function sendMessage() {
     inputText = inputText.trim()
     if (inputText) {
-        messagesContainer.insertAdjacentHTML('beforeend', `<p class="message">You: ${inputText}</p>`);
+        messagesContainer.insertAdjacentHTML('beforeend', `<div class="message"><strong class="name">You</strong>: ${inputText}</div>`);
 
         const payload = conversationHistory.length === 0
             ? { input: inputText, participantID } // First submission, send only input
@@ -76,8 +73,8 @@ async function sendMessage() {
         conversationHistory.push({ role: 'user', content: inputText })
         conversationHistory.push({ role: 'assistant', content: data.botResponse})
 
-        botElement = `<p class="message">Bot: ${formatResponse}</p>`
-        linkElement = `<p class="message">Relevant Links:</p>`
+        botElement = `<div class="response"><strong class="name">Bot</strong>: ${formatResponse}</div>`
+        linkElement = `<div class="response"><strong class="name">Relevant Links</strong>:</div>`
 
         data.searchResults.forEach(result => {(
             linkElement += `<a href="${result.url}"target="_blank">${result.title}</a><p>${result.snippet}</p>`
@@ -135,6 +132,7 @@ const quill = new Quill('#editor', {
 
 const downloadBtn = document.getElementById('download-btn')
 downloadBtn.addEventListener('click', () => {
+    logEvent('click', 'Download Button');
     console.log('downloading')
     const content = quill.root.innerHTML
 
@@ -148,3 +146,57 @@ downloadBtn.addEventListener('click', () => {
 
     html2pdf().set(opt).from(content).save()
 })
+
+// Saving deltas for the notes
+var Delta = Quill.import('delta');
+var change = new Delta();
+quill.on('text-change', (delta) => {
+  change = change.compose(delta);
+});
+
+quill.on('hover', () => {
+    logEvent('hover', 'Notes');
+});
+
+// save every 5 seconds
+setInterval(() => {
+  if (change.length() > 0) {
+    console.log('Saving changes', change);
+    fetch('/notes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+	participantID,
+        doc: quill.getContents().ops,
+        timestamp: new Date()
+      })
+    });
+    change = new Delta();
+  }
+}, 3000);
+
+async function fetchNotes() {
+    const response = await fetch('/getnotes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+	participantID
+      })
+    });
+    const data = await response.json();
+    //console.log(data.doc);
+    quill.setContents(data.doc);
+}
+
+// Check for unsaved data
+window.onbeforeunload = () => {
+  if (change.length() > 0) {
+    return 'Notes have unsaved changes. Are you sure you want to leave?';
+  }
+}
+
+// Load history when agent loads
+window.onload = () => {
+  loadConversationHistory();
+  fetchNotes();
+}

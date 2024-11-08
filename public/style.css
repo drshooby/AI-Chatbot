@@ -68,11 +68,10 @@ body {
 }
 
 #user-input {
-    width: 30%;
-    height: 3vh;
-    border: 1px solid black;
     padding-left: 1em;
     font-size: 15px;
+    border: none;
+    width: 100%;
 }
 
 #send-btn {
@@ -85,6 +84,16 @@ body {
     box-sizing: border-box;
 }
 
+#search-box {
+    border: 1px solid black;
+    display: flex;
+    width: 50%;
+}
+
+#send-btn:hover {
+    background-color: rgb(157, 192, 238);
+}
+
 #download-btn {
     width: 90px;
     height: 40px;
@@ -93,4 +102,25 @@ body {
     border: none;
     padding: 0.5em;
     box-sizing: border-box;
+}
+
+#download-btn:hover {
+    background-color: rgb(179, 113, 213);
+}
+
+.response {
+    background-color: rgb(166, 182, 135);
+    padding: 8px;
+    border-radius: 5px;
+    margin: 5px;
+}
+
+.message {
+    padding: 8px;
+    border-radius: 5px;
+    margin: 5px;
+}
+
+.message:hover {
+    background-color: rgb(166, 182, 235);
 }
