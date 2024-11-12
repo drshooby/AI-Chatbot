@@ -23,11 +23,37 @@ async function loadConversationHistory() {
         data.interactions.forEach(interaction => {
 	    let formatResponse = marked.parse(interaction.botResponse);
             messagesContainer.insertAdjacentHTML('beforeend', `<div class="message"><strong class="name">You</strong>: ${interaction.userInput}</div>`);
-            messagesContainer.insertAdjacentHTML('beforeend', `<div class="response"><strong class="name">Bot</strong>: ${formatResponse}</div>`);
+            messagesContainer.insertAdjacentHTML('beforeend', `<div class="messageDiv"><div class="response"><strong class="name">Bot</strong>: ${formatResponse}</div><div>`);
             // Add to conversation history
             conversationHistory.push({ role: 'user', content: interaction.userInput });
             conversationHistory.push({ role: 'assistant', content: interaction.botResponse });
         });
+
+        // Ensure old bot messages can be copied
+        const divs = document.querySelectorAll('.messageDiv');
+        divs.forEach(div => {
+            div.addEventListener('click', async () => {
+                try {
+                    const htmlToCopy = div.innerHTML;
+        
+                    await navigator.clipboard.write([
+                        new ClipboardItem({
+                            'text/html': new Blob([htmlToCopy], { type: 'text/html' })
+                        })
+                    ]);
+        
+                    alert('Bot text copied!');
+                } catch (err) {
+                    console.error('Failed to copy HTML: ', err);
+                }
+            });
+        });
+    }
+
+    // Scroll to latest message
+    const newestMessage = messagesContainer.lastElementChild;
+    if (newestMessage) {
+        newestMessage.scrollIntoView({ behavior: 'smooth' });
     }
 }
 
@@ -80,11 +106,24 @@ async function sendMessage() {
             linkElement += `<a href="${result.url}"target="_blank">${result.title}</a><p>${result.snippet}</p>`
         )});
 
-        newDiv = `<div class="messageDiv">${botElement}</div>` + linkElement
+        const newMessageDiv = document.createElement('div');
+        newMessageDiv.classList.add('messageDiv');
+        newMessageDiv.innerHTML = botElement + linkElement;
+        messagesContainer.appendChild(newMessageDiv);
 
-        messagesContainer.insertAdjacentHTML('beforeend', newDiv)
+        // Ensure the new bot response can be copied
+        newMessageDiv.addEventListener('click', async () => {
+            try {
+                const htmlToCopy = newMessageDiv.innerHTML;
+                await navigator.clipboard.write([new ClipboardItem({
+                    'text/html': new Blob([htmlToCopy], { type: 'text/html' })
+                })]);
 
-        const divs = document.querySelectorAll('.messageDiv'); // TODO!
+                alert('Bot text copied!');
+            } catch (err) {
+                console.error('Failed to copy HTML: ', err);
+            }
+        });
 
         const newestMessage = messagesContainer.lastElementChild
         if (newestMessage) {
