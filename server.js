@@ -100,47 +100,18 @@ app.post('/chat', async (req, res) => {
     return res.status(400).send('Participant ID is required')
   }
 
-  const initPrompt = 'You are a helpful assistant assisting in procedural knowledge understanding. For each step of the process, include a header, and create an organized response for the user.'
+  const initPrompt = 'You are a helpful assistant assisting in procedural knowledge understanding. For each step of the process, include a header, and create an organized response for the user. Please limit your responses to 450 tokens.'
 
   const messages = history.length === 0
     ? [{ role: 'system', content: initPrompt }, {role: 'user', content: userInput }]
     : [{ role: 'system', content: initPrompt }, ...history, { role: 'user', content: userInput }]
 
   try {
-    // BingAPI no longer working, below is a temporary replacement
-    // const bingResponse = await axios.get('https://api.bing.microsoft.com/v7.0/search', {
-    //     params: { q: userInput }, // Use the user's input as the search query
-    //     headers: { 'Ocp-Apim-Subscription-Key': process.env.BING_API_KEY }
-    // });
-
-    // const searchResults = bingResponse.data.webPages.value.slice(0, 3).map(result => ({
-    //     title: result.name,
-    //     url: result.url,
-    //     snippet: result.snippet
-    // }));
-
-    const searchResults = [
-        {
-            title: "title",
-            url: "google.com",
-            snippet: "placeholder text"
-        },
-        {
-            title: "title",
-            url: "google.com",
-            snippet: "placeholder text"
-        },
-        {
-            title: "title",
-            url: "google.com",
-            snippet: "placeholder text"
-        }
-    ]
 
     const response = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: messages,
-      max_tokens: 100,
+      max_tokens: 500,
     });
 
     const botResponse = response.choices[0].message.content.trim()
@@ -154,7 +125,7 @@ app.post('/chat', async (req, res) => {
     await interaction.save();  // Save the interaction to MongoDB
     
     // send bot response back to client
-    res.json({ searchResults, botResponse });
+    res.json({ botResponse });
   } catch (error) {
     console.error('Error interacting with OpenAI API:', error.message);
     res.status(500).send('Server Error');

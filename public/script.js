@@ -100,15 +100,10 @@ async function sendMessage() {
         conversationHistory.push({ role: 'assistant', content: data.botResponse})
 
         botElement = `<div class="response"><strong class="name">Bot</strong>: ${formatResponse}</div>`
-        linkElement = `<div class="response"><strong class="name">Relevant Links</strong>:</div>`
-
-        data.searchResults.forEach(result => {(
-            linkElement += `<a href="${result.url}"target="_blank">${result.title}</a><p>${result.snippet}</p>`
-        )});
 
         const newMessageDiv = document.createElement('div');
         newMessageDiv.classList.add('messageDiv');
-        newMessageDiv.innerHTML = botElement + linkElement;
+        newMessageDiv.innerHTML = botElement;
         messagesContainer.appendChild(newMessageDiv);
 
         // Ensure the new bot response can be copied
