@@ -130,6 +130,25 @@ async function sendMessage() {
     inputField.value = '';
 }
 
+function redirectToQualtrics() {
+  fetch('/redirect-to-survey', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ participantID }) // participantID from localStorage
+  })
+  .then(response => response.text()) // Get the URL from the response
+  .then(url => {
+    // Log the redirect event if you're using event logging
+    logEvent('redirect', 'Qualtrics Survey');
+    // Redirect to the survey
+    window.location.href = url;
+  })
+  .catch(error => {
+    console.error('Error redirecting to survey:', error);
+    alert('There was an error redirecting to the survey. Please try again.');
+  });
+}
+
 function logEvent(type, element) {
     fetch('/log-event', {
       method: 'POST',
