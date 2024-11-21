@@ -165,6 +165,10 @@ app.post('/redirect-to-survey', (req, res) => {
   res.send(surveyUrl);
 });
 
+app.get('/flow-page', (req, rsp) => {
+    rsp.sendFile(path.join(__dirname, 'public', 'flow.html'))
+})
+
 const PORT = 3000;
 
 app.listen(PORT, () => {

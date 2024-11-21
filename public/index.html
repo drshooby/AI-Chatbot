@@ -12,11 +12,11 @@
 </head>
 <body>
     <div id="main">
-        <h1>What is the Chatbot?</h1>
-        <p>Type your message in the input box and submit. The chat box will display messages between you and the bot.</p>
+        <h1>Welcome!</h1>
+        <p>Please enter your participant ID below</p>
     </div>
     <div id="form-container">
-        <form id="participant-form" action="/chat">
+        <form id="participant-form" action="/flow-page">
             <label for="participantID">Enter your participant ID:</label>
             <input type="text" id="participantID" name="participantID" required>
             <button type="submit">Start Chat</button>
@@ -26,7 +26,6 @@
         document.getElementById('participant-form').addEventListener('submit', (event) => {
             const participantID = document.getElementById('participantID').value
             localStorage.setItem('participantID', participantID)
-            document.location.href = "/chat.html"
         })
     </script>
 </body>
