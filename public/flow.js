@@ -50,8 +50,7 @@ const idInteger = parseInt(participantID)
 if (participantID % 2 == 0) {
     agentType.href = "/chat"
 } else {
-    const regAgentLink = `https://ai-agent-8xuj.onrender.com/chat?participantID=${participantID}`
-    agentType.href = regAgentLink
+    agentType.href = `https://ai-agent-8xuj.onrender.com/chat?participantID=${participantID}`
 }
 
 document.getElementById('demographics').addEventListener('click', (e) => {
