@@ -169,6 +169,10 @@ app.get('/flow-page', (req, rsp) => {
     rsp.sendFile(path.join(__dirname, 'public', 'flow.html'))
 })
 
+app.get('/task', (req, rsp) => {
+    rsp.sendFile(path.join(__dirname, 'public', 'task.html'))
+})
+
 const PORT = 3000;
 
 app.listen(PORT, () => {

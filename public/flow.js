@@ -1,5 +1,7 @@
 console.log("flow script connected")
 
+const agentType = document.getElementById('agent-link')
+
 function logEvent(type, element) {
     fetch('/log-event', {
         method: 'POST',
@@ -13,6 +15,13 @@ const participantID = localStorage.getItem('participantID');
 if (!participantID) {
     alert("Participant id not found")
     window.location.href = "/"
+}
+
+if (participantID % 2 == 0) {
+    agentType.href = "/chat"
+} else {
+    const regAgentLink = `https://ai-agent-8xuj.onrender.com/chat?participantID=${participantID}`
+    agentType.href = regAgentLink
 }
 
 function redirectToQualtrics() {
@@ -37,16 +46,16 @@ function redirectToQualtrics() {
 const h3 = document.getElementsByTagName('h3')
 h3[0].textContent += participantID
 
-const agentType = document.getElementById('agent-link')
+const idInteger = parseInt(participantID)
+
+if (participantID % 2 == 0) {
+    agentType.href = "/chat"
+} else {
+    const regAgentLink = `https://ai-agent-8xuj.onrender.com/chat?participantID=${participantID}`
+    agentType.href = regAgentLink
+}
+
 document.getElementById('demographics').addEventListener('click', (e) => {
     e.preventDefault()
     redirectToQualtrics()
 })
-
-const idInteger = parseInt(participantID)
-
-if (participantID % 2 == 0) {
-    agentType.href = ""
-} else {
-    agentType.href = ""
-}
