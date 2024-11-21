@@ -6,6 +6,11 @@ if (!participantID) {
     window.location.href = '/';
 }
 
+if (participantID % 2 != 0) {
+    alert('Wrong path for given ID.')
+    window.location.href = '/flow-page';
+}
+
 let conversationHistory = []
 
 async function loadConversationHistory() {

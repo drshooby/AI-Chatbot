@@ -1,5 +1,10 @@
 console.log("flow script connected")
 
+const participantID = localStorage.getItem('participantID');
+
+const h3 = document.getElementsByTagName('h3')
+h3[0].textContent += participantID
+
 const agentType = document.getElementById('agent-link')
 
 function logEvent(type, element) {
@@ -10,12 +15,12 @@ function logEvent(type, element) {
     });
 }
 
-const participantID = localStorage.getItem('participantID');
-
 if (!participantID) {
     alert("Participant id not found")
     window.location.href = "/"
 }
+
+const idInteger = parseInt(participantID)
 
 if (participantID % 2 == 0) {
     agentType.href = "/chat"
@@ -40,17 +45,6 @@ function redirectToQualtrics() {
         console.error('Error redirecting to survey:', error);
         alert('There was an error redirecting to the survey. Please try again.');
     });
-}
-
-const h3 = document.getElementsByTagName('h3')
-h3[0].textContent += participantID
-
-const idInteger = parseInt(participantID)
-
-if (participantID % 2 == 0) {
-    agentType.href = "/chat"
-} else {
-    agentType.href = `https://ai-agent-8xuj.onrender.com/chat?participantID=${participantID}`
 }
 
 document.getElementById('demographics').addEventListener('click', (e) => {
