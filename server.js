@@ -155,10 +155,21 @@ app.post('/log-event', async (req, res) => {
 });
 
 app.post('/redirect-to-survey', (req, res) => {
-  const { participantID } = req.body; // Getting participantID from request body
+  const { participantID, surveyType } = req.body; // Getting participantID from request body
   // Base Qualtrics URL from Step 2
-  const qualtricsBaseUrl =
-  'https://usfca.qualtrics.com/jfe/form/SV_1TR7PjZkeDXwnbw';
+
+  let qualtricsBaseUrl = ""
+  switch (surveyType) {
+    case 'demographics':
+        qualtricsBaseUrl = 'https://usfca.qualtrics.com/jfe/form/SV_1TR7PjZkeDXwnbw'
+        break
+    case 'pretask':
+        qualtricsBaseUrl = 'https://usfca.qualtrics.com/jfe/form/SV_ePVY2jOTVR8JHiS'
+        break
+    case 'posttask':
+        qualtricsBaseUrl = 'https://usfca.qualtrics.com/jfe/form/SV_bqm3Sfi7gQ07ji6'
+        break
+  }
   // Add the participant ID as a URL parameter
   const surveyUrl = `${qualtricsBaseUrl}?participantID=${encodeURIComponent(participantID)}`;
   // Send the URL back to the client

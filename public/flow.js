@@ -28,16 +28,17 @@ if (participantID % 2 == 0) {
     agentType.href = `https://ai-agent-8xuj.onrender.com/chat?participantID=${participantID}`
 }
 
-function redirectToQualtrics() {
+function redirectToQualtrics(surveyType) {
+
     fetch('/redirect-to-survey', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ participantID }) // participantID from localStorage
+        body: JSON.stringify({ participantID, surveyType }) // participantID from localStorage
     })
     .then(response => response.text()) // Get the URL from the response
     .then(url => {
         // Log the redirect event if you're using event logging
-        logEvent('redirect', 'Qualtrics Survey');
+        logEvent('redirect', 'Qualtrics Survey: ' + surveyType);
         // Redirect to the survey
         window.location.href = url;
     })
@@ -49,5 +50,15 @@ function redirectToQualtrics() {
 
 document.getElementById('demographics').addEventListener('click', (e) => {
     e.preventDefault()
-    redirectToQualtrics()
+    redirectToQualtrics('demographics')
+})
+
+document.getElementById('pretask').addEventListener('click', (e) => {
+    e.preventDefault()
+    redirectToQualtrics('pretask')
+})
+
+document.getElementById('posttask').addEventListener('click', (e) => {
+    e.preventDefault()
+    redirectToQualtrics('posttask')
 })
