@@ -46,7 +46,7 @@ async function loadConversationHistory() {
                             'text/html': new Blob([htmlToCopy], { type: 'text/html' })
                         })
                     ]);
-        
+                    logEvent('click', 'Bot text copy')
                     alert('Bot text copied!');
                 } catch (err) {
                     console.error('Failed to copy HTML: ', err);
@@ -118,7 +118,7 @@ async function sendMessage() {
                 await navigator.clipboard.write([new ClipboardItem({
                     'text/html': new Blob([htmlToCopy], { type: 'text/html' })
                 })]);
-
+                logEvent('click', 'Bot text copy')
                 alert('Bot text copied!');
             } catch (err) {
                 console.error('Failed to copy HTML: ', err);
@@ -168,6 +168,24 @@ const quill = new Quill('#editor', {
       placeholder: 'Your notes...',
       theme: 'snow', // or 'bubble'
 });
+
+let focusStartTIme = null
+
+quill.root.addEventListener('focus', () => {
+    focusStartTIme = Date.now()
+    logEvent('focus', 'Notes - Start Focus')
+})
+
+quill.root.addEventListener('blur', () => {
+    if (focusStartTIme) {
+        const focusEndTime = Date.now()
+        const timeDiff = (focusEndTime - focusStartTIme) / 1000
+        logEvent('blur', `Notes - Focus Duration: ${timeDiff.toFixed(2)} seconds`)
+        focusStartTIme = null
+    } else {
+        logEvent('blur', 'Notes')
+    }
+})
 
 const downloadBtn = document.getElementById('download-btn')
 downloadBtn.addEventListener('click', () => {
